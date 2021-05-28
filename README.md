@@ -1,1 +1,1 @@
-# SQL
+# Database related and SQL queries 
