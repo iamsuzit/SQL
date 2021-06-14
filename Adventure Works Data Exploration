@@ -1,0 +1,119 @@
+
+SQLZOO “Adventure Works” Data Exploration
+
+1.	Show the first name and the email address of customer with CompanyName 'Bike World'
+
+SELECT firstname,
+       emailaddress
+FROM   customer
+WHERE  companyname = 'Bike World' 
+
+2.	Show the CompanyName for all customers with an address in City 'Dallas'.
+
+SELECT companyname
+FROM   customer C
+       JOIN customeraddress CA
+         ON C.customerid = CA.customerid
+       JOIN address A
+         ON CA.addressid = A.addressid
+WHERE  city = 'Dallas' 
+
+3.	How many items with ListPrice more than $1000 have been sold?
+
+SELECT Count(*) AS Total
+FROM   salesorderdetail SD
+       JOIN product P
+         ON sd.productid = p.productid
+WHERE  listprice > 1000 
+
+4.	Give the CompanyName of those customers with orders over $100000. Include the subtotal plus tax plus freight.
+
+SELECT c.companyname
+FROM   customer C
+       JOIN salesorderheader SOH
+         ON c.customerid = soh.customerid
+WHERE  ( subtotal + taxamt + freight ) > 100000 
+
+5.	Find the number of left racing socks ('Racing Socks, L') ordered by CompanyName 'Riding Cycles'
+
+SELECT orderqty AS Total
+FROM   salesorderdetail sod
+       JOIN product p
+         ON sod.productid = p.productid
+       JOIN salesorderheader soh
+         ON sod.salesorderid = soh.salesorderid
+       JOIN customer c
+         ON soh.customerid = c.customerid
+WHERE  c.companyname = 'Riding Cycles'
+       AND p.NAME = 'Racing Socks, L' 
+
+
+6.	A "Single Item Order" is a customer order where only one item is ordered. Show the SalesOrderID and the UnitPrice for every Single Item Order.
+
+SELECT salesorderid,
+       unitprice,
+       orderqty
+FROM   salesorderdetail
+WHERE  orderqty = 1 
+
+7.	Where did the racing socks go? List the product name and the CompanyName for all Customers who ordered ProductModel 'Racing Socks'.
+
+SELECT p.NAME,
+       companyname
+FROM   product p
+       JOIN productmodel pm
+         ON p.productmodelid = pm.productmodelid
+       JOIN salesorderdetail sod
+         ON p.productid = sod.productid
+       JOIN salesorderheader soh
+         ON sod.salesorderid = soh.salesorderid
+       JOIN customer c
+         ON soh.customerid = c.customerid
+WHERE  pm.NAME = 'Racing Socks' 
+
+8.	Show the product description for culture 'fr' for product with ProductID 736.
+
+SELECT description
+FROM   productdescription pd
+       JOIN productmodelproductdescription pmpd
+         ON pd.productdescriptionid = pmpd.productdescriptionid
+       JOIN product p
+         ON pmpd.productmodelid = p.productmodelid
+WHERE  pmpd.culture = 'fr'
+       AND p.productid = '736' 
+
+
+9.	Use the SubTotal value in SaleOrderHeader to list orders from the largest to the smallest. For each order show the CompanyName and the SubTotal and the total weight of the order.
+
+SELECT companyname,
+       subtotal,
+       weight
+FROM   customer c
+       JOIN salesorderheader soh
+         ON c.customerid = soh.customerid
+       JOIN salesorderdetail sod
+         ON soh.salesorderid = sod.salesorderid
+       JOIN product p
+         ON sod.productid = p.productid
+GROUP  BY companyname,
+          subtotal,
+          weight
+ORDER  BY subtotal DESC 
+
+
+10.	How many products in ProductCategory 'Cranksets' have been sold to an address in 'London'?
+
+SELECT Sum(orderqty) AS 'Product Quantity'
+FROM   productcategory pc
+       JOIN product p
+         ON pc.productcategoryid = p.productcategoryid
+       JOIN salesorderdetail sod
+         ON p.productid = sod.productid
+       JOIN salesorderheader soh
+         ON sod.salesorderid = soh.salesorderid
+       JOIN customeraddress ca
+         ON soh.customerid = ca.customerid
+       JOIN address a
+         ON ca.addressid = a.addressid
+WHERE  pc.NAME = 'Cranksets'
+       AND city = 'London' 
