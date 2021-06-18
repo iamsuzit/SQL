@@ -31,4 +31,23 @@ FROM booking b
 WHERE guest_id IN (1185, 1270)
 GROUP BY guest_id
 
+--Ruth Cadbury. Show the total amount payable by guest Ruth Cadbury for her room bookings. You should JOIN to the rate table using room_type_requested and occupants.
+SELECT SUM(b.nights* r.amount) as Total
+FROM booking b JOIN rate r 
+ON b.room_type_requested = r.room_type
+AND b.occupants = r.occupancy
+JOIN guest g ON guest_id = g.id
+WHERE g.first_name = 'Ruth' AND g.last_name = 'Cadbury'
+
+--Including Extras. Calculate the total bill for booking 5346 including extras.
+SELECT SUM(r.amount * b.nights + e.amount) as Total
+FROM booking b 
+JOIN rate r ON b.room_type_requested = r.room_type
+AND b.occupants = r.occupancy
+JOIN (SELECT booking_id, SUM(amount) as amount
+      FROM extra
+      GROUP BY booking_id) as e
+ON e.booking_id = b.booking_id
+WHERE b.booking_id = 5346
+
 
