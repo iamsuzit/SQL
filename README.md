@@ -1,2 +1,2 @@
 # SQL
-  Projects and Exercises. 
+  Projects 
