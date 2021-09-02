@@ -1,0 +1,43 @@
+                          1. Dataset Inspection
+SELECT
+  *
+FROM
+  health.user_logs
+LIMIT
+  10;
+  
+                          2. Record Counts
+SELECT
+  COUNT(*)
+FROM
+  health.user_logs
+  
+                          3. Unique Column Counts
+SELECT
+  COUNT(DISTINCT id)
+FROM
+  health.user_logs
+ 
+                           4. Single Column Frequency Counts
+ SELECT
+  measure,
+  COUNT(*) AS frequency, 
+  ROUND(
+    100 * COUNT(*) / SUM(COUNT(*)) OVER (), 
+    2
+    ) AS percentage
+FROM
+  health.user_logs
+GROUP BY
+  measure
+ORDER BY
+  frequency DESC;
+  
+  
+  
+  
+  
+  
+  
+  
+ 
