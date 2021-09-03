@@ -35,9 +35,147 @@ ORDER BY
   
   
   
+                            5. Individual Column Distributions
+SELECT
+  *
+FROM
+  health.user_logs
+LIMIT
+  10;
   
   
+SELECT
+  measure_value,
+  COUNT(*) as frequency
+FROM
+  health.user_logs
+GROUP BY
+  measure_value
+ORDER BY
+  frequency DESC
+LIMIT 10;
+
+
+SELECT
+  systolic,
+  COUNT(*) AS frequency
+FROM
+  health.user_logs
+GROUP BY
+  systolic
+ORDER BY
+  frequency DESC
+LIMIT
+  10;
   
   
+SELECT
+  diastolic,
+  COUNT(*) as frequency
+FROM
+  health.user_logs
+GROUP BY
+  diastolic
+ORDER BY
+  frequency DESC
+LIMIT
+  10;
+  
+  
+                             6. Detecting Duplicate Records
+SELECT
+  COUNT(*)
+FROM
+  health.user_logs
+LIMIT
+  10;
+  
+  
+ SELECT
+  COUNT(*)
+FROM
+  (
+    SELECT
+      DISTINCT *
+    FROM
+      health.user_logs
+  ) AS Count_without_duplicate;
+  
+  
+  WITH deduped_logs AS (
+  SELECT
+    DISTINCT *
+  FROM
+    health.user_logs
+)
+SELECT
+  COUNT(*)
+FROM
+  deduped_logs
+  
+  
+DROP TABLE IF EXISTS deduplicated_user_logs;
+CREATE TEMP TABLE deduplicated_user_logs AS (
+  SELECT
+    DISTINCT *
+  FROM
+    health.user_logs
+)
+SELECT
+  *
+FROM
+  deduplicated_user_logs
+LIMIT
+  10;
+  
+
+
+                          4. Identifying Duplicate Records
+--returning duplicate rows                          
+SELECT
+  id,
+  log_date,
+  measure,
+  measure_value,
+  systolic,
+  diastolic,
+  COUNT(*) AS frequency
+FROM
+  health.user_logs
+GROUP BY
+  id,
+  log_date,
+  measure,
+  measure_value,
+  systolic,
+  diastolic
+ORDER BY
+  frequency DESC
+  
+  
+--Having clause for unique duplicates
+DROP TABLE IF EXISTS unique_duplicate_records;
+
+CREATE TEMPORARY TABLE unique_duplicate_records AS
+SELECT *
+FROM health.user_logs
+GROUP BY
+  id,
+  log_date,
+  measure,
+  measure_value, 
+  systolic,
+  diastolic
+HAVING COUNT(*) > 1;
+SELECT * 
+FROM unique_duplicate_records
+LIMIT 10;
+
+
+
+
+  
+  
+ 
   
  
